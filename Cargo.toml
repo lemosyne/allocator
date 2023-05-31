@@ -1,0 +1,11 @@
+[package]
+name = "allocator"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+num-traits = { version = "0.2.15", optional = true }
+thiserror = { version = "1.0.40", optional = true }
+
+[features]
+seq = ["dep:num-traits", "dep:thiserror"]
