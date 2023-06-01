@@ -16,6 +16,3 @@ pub trait Allocator {
     /// Reserves an ID.
     fn reserve(&mut self, id: Self::Id) -> Result<(), Self::Error>;
 }
-
-#[cfg(feature = "seq")]
-pub mod seq;
