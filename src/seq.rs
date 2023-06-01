@@ -1,21 +1,25 @@
 use crate::Allocator;
 use num_traits::PrimInt;
-use std::ops::AddAssign;
+use std::{collections::HashSet, hash::Hash, ops::AddAssign};
 use thiserror::Error;
 
 pub struct SequentialAllocator<T> {
     curr: T,
+    reserved: HashSet<T>,
 }
 
 impl<T: PrimInt> SequentialAllocator<T> {
     pub fn new() -> Self {
-        Self { curr: T::zero() }
+        Self {
+            curr: T::zero(),
+            reserved: HashSet::new(),
+        }
     }
 }
 
 impl<T> Allocator for SequentialAllocator<T>
 where
-    T: PrimInt + AddAssign,
+    T: PrimInt + AddAssign + Hash,
 {
     type Id = T;
     type Error = Error;
@@ -24,13 +28,22 @@ where
         if self.curr == T::max_value() {
             Err(Error::OutOfIds)
         } else {
+            while self.reserved.contains(&self.curr) {
+                self.curr += T::one();
+            }
             let id = self.curr;
             self.curr += T::one();
             Ok(id)
         }
     }
 
-    fn dealloc(&mut self, _: Self::Id) -> Result<(), Self::Error> {
+    fn dealloc(&mut self, id: Self::Id) -> Result<(), Self::Error> {
+        self.reserved.remove(&id);
+        Ok(())
+    }
+
+    fn reserve(&mut self, id: Self::Id) -> Result<(), Self::Error> {
+        self.reserved.insert(id);
         Ok(())
     }
 }

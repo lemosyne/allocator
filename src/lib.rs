@@ -12,6 +12,9 @@ pub trait Allocator {
 
     /// Deallocates an ID.
     fn dealloc(&mut self, id: Self::Id) -> Result<(), Self::Error>;
+
+    /// Reserves an ID.
+    fn reserve(&mut self, id: Self::Id) -> Result<(), Self::Error>;
 }
 
 #[cfg(feature = "seq")]
