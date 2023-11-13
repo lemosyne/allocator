@@ -1,11 +1,9 @@
-use core::fmt::Debug;
-
 /// An `Allocator` oversees the allocation and deallocation of IDs.
 pub trait Allocator {
     /// The type of ID.
     type Id;
     /// Associated error type.
-    type Error: Debug;
+    type Error: std::error::Error + core::fmt::Debug;
 
     /// Allocates an ID.
     fn alloc(&mut self) -> Result<Self::Id, Self::Error>;
